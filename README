@@ -1,0 +1,71 @@
+NAME
+    Parallel::Downloader - simple downloading of multiple files at once
+
+VERSION
+    version 0.120100
+
+SYNOPSIS
+        use HTTP::Request::Common qw( GET POST );
+        use Parallel::Downloader 'async_download';
+
+        # simple example
+        my @requests = map GET( "http://google.com" ), ( 1..15 );
+        my @responses = async_download( requests => \@requests );
+
+        # complex example
+        my @complex_reqs = ( ( map POST( "http://google.com", [ type_id => $_ ] ), ( 1..60 ) ),
+                           ( map POST( "http://yahoo.com", [ type_id => $_ ] ), ( 1..60 ) ) );
+
+        my $downloader = Parallel::Downloader->new(
+            requests => \@complex_reqs,
+            workers => 50,
+            conns_per_host => 12,
+            aehttp_args => {
+                timeout => 30,
+                on_prepare => sub {
+                    print "download started ($AnyEvent::HTTP::ACTIVE / $AnyEvent::HTTP::MAX_PER_HOST)\n"
+                }
+            },
+            debug => 1,
+            logger => sub {
+                my ( $downloader, $message ) = @_;
+                print "downloader sez [$message->{type}]: $message->{msg}\n";
+            },
+        );
+        my @complex_responses = $downloader->run;
+
+FUNCTIONS
+  async_download
+    Can be requested to be exported, will instantiate a Parallel::Downloader
+    object with the given parameters, run it and return the results.
+
+METHODS
+  run
+    Runs the downloads for the given parameters and returns an array of
+    array references, each containing the decoded contents, the headers and
+    the HTTP::Request object.
+
+SUPPORT
+  Bugs / Feature Requests
+    Please report any bugs or feature requests through the issue tracker at
+    <http://rt.cpan.org/Public/Dist/Display.html?Name=Parallel-Downloader>.
+    You will be notified automatically of any progress on your issue.
+
+  Source Code
+    This is open source software. The code repository is available for
+    public review and contribution under the terms of the license.
+
+    <https://github.com/wchristian/parallel-downloader>
+
+      git clone https://github.com/wchristian/parallel-downloader.git
+
+AUTHOR
+    Christian Walde <walde.christian@googlemail.com>
+
+COPYRIGHT AND LICENSE
+    This software is Copyright (c) 2012 by Christian Walde.
+
+    This is free software, licensed under:
+
+      DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE, Version 2, December 2004
+

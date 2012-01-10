@@ -1,5 +1,5 @@
 ---
-abstract: 'simple downloading of multiple files at once'
+abstract: 'simply download multiple files at once'
 author:
   - 'Christian Walde <walde.christian@googlemail.com>'
 build_requires:
@@ -30,7 +30,7 @@ no_index:
 provides:
   Parallel::Downloader:
     file: lib/Parallel/Downloader.pm
-    version: 0.120101
+    version: 0.120102
 requires:
   AnyEvent::HTTP: 0
   Moo: 0
@@ -42,4 +42,4 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Parallel-Downloader
   homepage: https://github.com/wchristian/parallel-downloader
   repository: https://github.com/wchristian/parallel-downloader.git
-version: 0.120101
+version: 0.120102

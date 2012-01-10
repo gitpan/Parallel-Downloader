@@ -1,8 +1,8 @@
 NAME
-    Parallel::Downloader - simple downloading of multiple files at once
+    Parallel::Downloader - simply download multiple files at once
 
 VERSION
-    version 0.120101
+    version 0.120102
 
 SYNOPSIS
         use HTTP::Request::Common qw( GET POST );

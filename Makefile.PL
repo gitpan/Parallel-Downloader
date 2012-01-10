@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "simple downloading of multiple files at once",
+  "ABSTRACT" => "simply download multiple files at once",
   "AUTHOR" => "Christian Walde <walde.christian\@googlemail.com>",
   "BUILD_REQUIRES" => {
     "File::Find" => 0,
@@ -34,7 +34,7 @@ my %WriteMakefileArgs = (
     "Sub::Exporter::Simple" => 0,
     "strictures" => 0
   },
-  "VERSION" => "0.120101",
+  "VERSION" => "0.120102",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -2,9 +2,9 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.120101'; # VERSION
+our $VERSION = '0.120102'; # VERSION
 
-# ABSTRACT: simple downloading of multiple files at once
+# ABSTRACT: simply download multiple files at once
 
 #
 # This file is part of Parallel-Downloader
@@ -173,11 +173,11 @@ __END__
 
 =head1 NAME
 
-Parallel::Downloader - simple downloading of multiple files at once
+Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.120101
+version 0.120102
 
 =head1 SYNOPSIS
 

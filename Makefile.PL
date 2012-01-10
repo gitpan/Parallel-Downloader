@@ -34,7 +34,7 @@ my %WriteMakefileArgs = (
     "Sub::Exporter::Simple" => 0,
     "strictures" => 0
   },
-  "VERSION" => "0.120100",
+  "VERSION" => "0.120101",
   "test" => {
     "TESTS" => "t/*.t"
   }

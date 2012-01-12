@@ -2,18 +2,21 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.120102'; # VERSION
+our $VERSION = '0.120120'; # VERSION
 
 # ABSTRACT: simply download multiple files at once
 
 #
 # This file is part of Parallel-Downloader
 #
-# This software is Copyright (c) 2012 by Christian Walde.
 #
-# This is free software, licensed under:
+# Christian Walde has dedicated the work to the Commons by waiving all of his
+# or her rights to the work worldwide under copyright law and all related or
+# neighboring legal rights he or she had in the work, to the extent allowable by
+# law.
 #
-#   DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE, Version 2, December 2004
+# Works under CC0 do not require attribution. When citing the work, you should
+# not imply endorsement by the author.
 #
 
 
@@ -177,7 +180,7 @@ Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.120102
+version 0.120120
 
 =head1 SYNOPSIS
 
@@ -269,11 +272,14 @@ Christian Walde <walde.christian@googlemail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2012 by Christian Walde.
 
-This is free software, licensed under:
+Christian Walde has dedicated the work to the Commons by waiving all of his
+or her rights to the work worldwide under copyright law and all related or
+neighboring legal rights he or she had in the work, to the extent allowable by
+law.
 
-  DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE, Version 2, December 2004
+Works under CC0 do not require attribution. When citing the work, you should
+not imply endorsement by the author.
 
 =cut
 

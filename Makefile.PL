@@ -30,11 +30,11 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "AnyEvent::HTTP" => 0,
     "Moo" => 0,
-    "MooX::Types::MooseLike" => 0,
+    "MooX::Types::MooseLike" => "0.03",
     "Sub::Exporter::Simple" => 0,
     "strictures" => 0
   },
-  "VERSION" => "0.120120",
+  "VERSION" => "0.121540",
   "test" => {
     "TESTS" => "t/*.t"
   }

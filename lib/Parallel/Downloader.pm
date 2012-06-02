@@ -2,7 +2,7 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.120120'; # VERSION
+our $VERSION = '0.121540'; # VERSION
 
 # ABSTRACT: simply download multiple files at once
 
@@ -21,7 +21,7 @@ our $VERSION = '0.120120'; # VERSION
 
 
 use Moo;
-use MooX::Types::MooseLike qw( Bool Int HashRef CodeRef ArrayRef );
+use MooX::Types::MooseLike::Base qw( Bool Int HashRef CodeRef ArrayRef );
 
 sub {
     has requests => ( is => 'ro', isa => ArrayRef, required => 1, coerce => \&_interleave_by_host );
@@ -180,7 +180,7 @@ Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.120120
+version 0.121540
 
 =head1 SYNOPSIS
 
@@ -237,7 +237,50 @@ should be enough for most uses.
 =head2 async_download
 
 Can be requested to be exported, will instantiate a Parallel::Downloader
-object with the given parameters, run it and return the results.
+object with the given parameters, run it and return the results. Its
+parameters are as follows:
+
+=head3 requests (required)
+
+Reference to an array of HTTP::Request objects, all of which will be
+downloaded.
+
+=head3 aehttp_args
+
+A reference to a hash containing arguments that will be passed to
+AnyEvent::HTTP::http_request.
+
+Default is an empty hashref.
+
+=head3 conns_per_host
+
+Sets the number of connections allowed per host by changing the
+corresponding AnyEvent::HTTP package variable.
+
+Default is '4'.
+
+=head3 debug
+
+A boolean that determines whether logging operations are a NOP or
+actually run. Set to 1 to activate the logging.
+
+Default is '0'.
+
+=head3 logger
+
+A reference to a sub that will received a hash containing logging
+information. Whether that sub then prints them to screen or into a
+database or other targets is up to the user.
+
+Default is a sub that prints to the screen.
+
+=head3 workers
+
+The amount of workers to be used for downloading. Useful for
+controlling the global amount of connections your machine will try
+to establish.
+
+Default is '10'.
 
 =head1 METHODS
 
@@ -247,7 +290,7 @@ Runs the downloads for the given parameters and returns an array of array
 references, each containing the decoded contents, the headers and the
 HTTP::Request object.
 
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders
+=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
 
 =head1 SUPPORT
 

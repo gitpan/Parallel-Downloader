@@ -2,7 +2,7 @@ NAME
     Parallel::Downloader - simply download multiple files at once
 
 VERSION
-    version 0.121540
+    version 0.121560
 
 SYNOPSIS
         use HTTP::Request::Common qw( GET POST );
@@ -77,12 +77,12 @@ FUNCTIONS
 
    debug
     A boolean that determines whether logging operations are a NOP or
-    actually run. Set to 1 to activate the logging.
+    actually run. Set to any true value to activate the logging.
 
     Default is '0'.
 
    logger
-    A reference to a sub that will received a hash containing logging
+    A reference to a sub that will receive a hash containing logging
     information. Whether that sub then prints them to screen or into a
     database or other targets is up to the user.
 
@@ -93,6 +93,15 @@ FUNCTIONS
     the global amount of connections your machine will try to establish.
 
     Default is '10'.
+
+   build_response
+    A reference to a sub that will be called on completion of a request to
+    build the response variable that will be returned for this request. It
+    receives as parameters the body of the response, a hash ref of the
+    response headers and the original request.
+
+    Default is a sub that returns the parameters wrapped in an array
+    reference.
 
 METHODS
   run

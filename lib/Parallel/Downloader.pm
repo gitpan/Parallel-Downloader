@@ -2,7 +2,7 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.121540'; # VERSION
+our $VERSION = '0.121560'; # VERSION
 
 # ABSTRACT: simply download multiple files at once
 
@@ -30,6 +30,7 @@ sub {
     has aehttp_args    => ( is => 'ro', isa => HashRef, default => sub { {} } );
     has debug          => ( is => 'ro', isa => Bool,    default => sub { 0 } );
     has logger         => ( is => 'ro', isa => CodeRef, default => sub { \&_default_log } );
+    has build_response => ( is => 'ro', isa => CodeRef, default => sub { \&_default_build_response } );
 
     has _responses => ( is => 'ro', isa => ArrayRef, default => sub { [] } );
     has _cv => ( is => 'ro', isa => sub { $_[0]->isa( 'AnyEvent::CondVar' ) }, default => sub { AnyEvent->condvar } );
@@ -119,7 +120,7 @@ sub _make_post_download_sub {
     my ( $self, $worker_id, $req ) = @_;
 
     my $post_download_sub = sub {
-        push @{ $self->_responses }, [ @_, $req ];
+        push @{ $self->_responses }, $self->build_response->( @_, $req );
 
         my $host_name = $req->uri->host;
         $self->_log(
@@ -134,6 +135,11 @@ sub _make_post_download_sub {
     };
 
     return $post_download_sub;
+}
+
+sub _default_build_response {
+    my ( $body, $hdr, $req ) = @_;
+    return [ $body, $hdr, $req ];
 }
 
 sub _end_worker {
@@ -180,7 +186,7 @@ Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.121540
+version 0.121560
 
 =head1 SYNOPSIS
 
@@ -236,14 +242,13 @@ should be enough for most uses.
 
 =head2 async_download
 
-Can be requested to be exported, will instantiate a Parallel::Downloader
-object with the given parameters, run it and return the results. Its
-parameters are as follows:
+Can be requested to be exported, will instantiate a Parallel::Downloader object
+with the given parameters, run it and return the results. Its parameters are as
+follows:
 
 =head3 requests (required)
 
-Reference to an array of HTTP::Request objects, all of which will be
-downloaded.
+Reference to an array of HTTP::Request objects, all of which will be downloaded.
 
 =head3 aehttp_args
 
@@ -254,33 +259,41 @@ Default is an empty hashref.
 
 =head3 conns_per_host
 
-Sets the number of connections allowed per host by changing the
-corresponding AnyEvent::HTTP package variable.
+Sets the number of connections allowed per host by changing the corresponding
+AnyEvent::HTTP package variable.
 
 Default is '4'.
 
 =head3 debug
 
-A boolean that determines whether logging operations are a NOP or
-actually run. Set to 1 to activate the logging.
+A boolean that determines whether logging operations are a NOP or actually run.
+Set to any true value to activate the logging.
 
 Default is '0'.
 
 =head3 logger
 
-A reference to a sub that will received a hash containing logging
-information. Whether that sub then prints them to screen or into a
-database or other targets is up to the user.
+A reference to a sub that will receive a hash containing logging information.
+Whether that sub then prints them to screen or into a database or other targets
+is up to the user.
 
 Default is a sub that prints to the screen.
 
 =head3 workers
 
-The amount of workers to be used for downloading. Useful for
-controlling the global amount of connections your machine will try
-to establish.
+The amount of workers to be used for downloading. Useful for controlling the
+global amount of connections your machine will try to establish.
 
 Default is '10'.
+
+=head3 build_response
+
+A reference to a sub that will be called on completion of a request to build the
+response variable that will be returned for this request. It receives as
+parameters the body of the response, a hash ref of the response headers and the
+original request.
+
+Default is a sub that returns the parameters wrapped in an array reference.
 
 =head1 METHODS
 

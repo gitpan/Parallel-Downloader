@@ -2,7 +2,7 @@ NAME
     Parallel::Downloader - simply download multiple files at once
 
 VERSION
-    version 0.121560
+    version 0.130530
 
 SYNOPSIS
         use HTTP::Request::Common qw( GET POST );
@@ -102,6 +102,14 @@ FUNCTIONS
 
     Default is a sub that returns the parameters wrapped in an array
     reference.
+
+   sorted
+    A boolean that determines whether the returned responses are sorted in
+    the same order as the input requests. Can be useful to disable if
+    build_response was overridden to not return an array or not return the
+    request as the third element of the response array.
+
+    Default is '1'.
 
 METHODS
   run

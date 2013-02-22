@@ -2,7 +2,7 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.121560'; # VERSION
+our $VERSION = '0.130530'; # VERSION
 
 # ABSTRACT: simply download multiple files at once
 
@@ -26,11 +26,12 @@ use MooX::Types::MooseLike::Base qw( Bool Int HashRef CodeRef ArrayRef );
 sub {
     has requests => ( is => 'ro', isa => ArrayRef, required => 1, coerce => \&_interleave_by_host );
     has workers        => ( is => 'ro', isa => Int,     default => sub { 10 } );
-    has conns_per_host => ( is => 'ro', isa => Int,     default => sub { 4 }, trigger => \&_init_workers_per_host );
+    has conns_per_host => ( is => 'ro', isa => Int,     default => sub { 4 } );
     has aehttp_args    => ( is => 'ro', isa => HashRef, default => sub { {} } );
     has debug          => ( is => 'ro', isa => Bool,    default => sub { 0 } );
     has logger         => ( is => 'ro', isa => CodeRef, default => sub { \&_default_log } );
     has build_response => ( is => 'ro', isa => CodeRef, default => sub { \&_default_build_response } );
+    has sorted         => ( is => 'ro', isa => Bool,    default => sub { 1 } );
 
     has _responses => ( is => 'ro', isa => ArrayRef, default => sub { [] } );
     has _cv => ( is => 'ro', isa => sub { $_[0]->isa( 'AnyEvent::CondVar' ) }, default => sub { AnyEvent->condvar } );
@@ -43,12 +44,6 @@ use Sub::Exporter::Simple 'async_download';
 
 sub async_download {
     return __PACKAGE__->new( @_ )->run;
-}
-
-sub _init_workers_per_host {
-    my ( undef, $limit ) = @_;
-    $AnyEvent::HTTP::MAX_PER_HOST = $limit;
-    return;
 }
 
 sub _interleave_by_host {
@@ -77,21 +72,30 @@ sub _interleave_by_host {
 sub run {
     my ( $self ) = @_;
 
+    local $AnyEvent::HTTP::MAX_PER_HOST = $self->conns_per_host;
+
+    my @consumable_list = @{ $self->requests };
+
     for ( 1 .. $self->_sanitize_worker_max ) {
         $self->_cv->begin;
         $self->_log( msg => "$_ started", type => "WorkerStart", worker_id => $_ );
-        $self->_add_request( $_ );
+        $self->_add_request( $_, \@consumable_list );
     }
 
     $self->_cv->recv;
 
-    return @{ $self->_responses };
+    return @{ $self->_responses } if !$self->sorted;
+
+    my %unsorted = map { 0 + $_->[2] => $_ } @{ $self->_responses };
+    my @sorted = map { $unsorted{ 0 + $_ } } @{ $self->requests };
+
+    return @sorted;
 }
 
 sub _add_request {
-    my ( $self, $worker_id ) = @_;
+    my ( $self, $worker_id, $requests ) = @_;
 
-    my $req = shift @{ $self->requests };
+    my $req = shift @{$requests};
     return $self->_end_worker( $worker_id ) if !$req;
 
     my $post_download_sub = $self->_make_post_download_sub( $worker_id, $req );
@@ -186,7 +190,7 @@ Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.121560
+version 0.130530
 
 =head1 SYNOPSIS
 
@@ -294,6 +298,15 @@ parameters the body of the response, a hash ref of the response headers and the
 original request.
 
 Default is a sub that returns the parameters wrapped in an array reference.
+
+=head3 sorted
+
+A boolean that determines whether the returned responses are sorted in the same
+order as the input requests. Can be useful to disable if build_response was
+overridden to not return an array or not return the request as the third element
+of the response array.
+
+Default is '1'.
 
 =head1 METHODS
 

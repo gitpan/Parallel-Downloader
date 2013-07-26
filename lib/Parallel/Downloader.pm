@@ -2,7 +2,7 @@ use strictures;
 
 package Parallel::Downloader;
 
-our $VERSION = '0.132070'; # VERSION
+our $VERSION = '0.132071'; # VERSION
 
 # ABSTRACT: simply download multiple files at once
 
@@ -190,7 +190,7 @@ Parallel::Downloader - simply download multiple files at once
 
 =head1 VERSION
 
-version 0.132070
+version 0.132071
 
 =head1 SYNOPSIS
 
